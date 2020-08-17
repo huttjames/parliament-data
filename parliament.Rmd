@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+library(forcats)
 library(tidyverse)
 ```
 
@@ -20,13 +21,56 @@ x <- readRDS("raw-data/cleaned_x.rds")
 
 ```{r x_mod, echo=FALSE}
 
-glimpse(x)
+# Modify x such that we keep only the main parties of interest separate
 
-skim(x)
+x_group <- x %>%
+  filter(party != "CHAIR") %>%
+  filter(year > 1988) %>%
+  mutate(party_simple = as_factor(if_else(party %in% c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Independent", "Change UK", "UKIP", "GPEW"), party, "Other"))) 
 
-x_skim
+# Reorder the parties into order of interest
 
-ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point()
+x_group$party_simple <- x_group$party_simple %>%
+  fct_relevel(c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Independent", "Change UK", "UKIP", "GPEW", "Other"))
+
+# Assign each party a colour 
+
+cols <- c("Con" = "blue",
+          "Lab" = "red",
+          "LibDem" = "orange",
+          "SNP" = "yellow",
+          "DUP" = "blue",
+          "PlaidCymru" = "yellow",
+          "UUP" = "orange",
+          "SDLP" = "green",
+          "Independent" = "black",
+          "Change UK" = "grey",
+          "UKIP" = "purple",
+          "GPEW" = "green",
+          "Other" = "black")
+
+
+```
+```{r charts1, echo=FALSE}
+
+# Plot proportion of speeches by party
+
+x_group %>%
+  group_by(year, party_simple) %>%
+  summarise(n = n()) %>%
+  mutate(prop = n / sum(n)) %>%
+  ggplot(aes(year, prop, fill = party_simple)) + 
+  geom_col() + 
+  scale_fill_manual(values = cols)
+
+# Plot total number of speeches by party
+
+x_group %>%
+  group_by(year, party_simple) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(year, n, fill = party_simple)) + 
+  geom_col() + 
+  scale_fill_manual(values = cols)
 
 ```
 
