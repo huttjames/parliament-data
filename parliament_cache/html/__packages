@@ -8,3 +8,5 @@ readr
 purrr
 dplyr
 stringr
+skimr
+lubridate

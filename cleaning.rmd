@@ -55,6 +55,8 @@ x_mod <- x %>%
   filter(is.na(speaker) == FALSE) %>%
   filter(is.na(party) == FALSE)
 
+
+
 # Save the cleaned data to a new rds 
 
 saveRDS(x_mod, "raw-data/cleaned_x.rds")

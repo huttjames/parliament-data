@@ -9,14 +9,19 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(forcats)
+library(skimr)
+library(purrr)
+library(lubridate)
 library(tidyverse)
 ```
 
-```{r data, echo=FALSE, cache=TRUE}
+```{r data, echo=FALSE, cache=TRUE, cache.lazy=FALSE}
 
 # The database is stored as an r object, rename it for ease of access
 
-x <- readRDS("raw-data/cleaned_x.rds")
+source("cleaning.r")
+
+x <- load_data()
 ```
 
 ```{r x_mod, echo=FALSE}
