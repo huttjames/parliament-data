@@ -10,33 +10,45 @@ make_plot_master <- function(){ggplot(iris, aes(Sepal.Length, Sepal.Width)) + ge
 # Define UI for application that draws a histogram
 ui <- fluidPage(fluidPage(theme = shinytheme("flatly"),
                           
-                          # Adding title and favicon
-                          
-                          HTML('<script> document.title = "Parliament Speaks"; </script>'),
-                          tags$head(tags$link(rel="shortcut icon", href="icon.ico")),
-  navbarPage(
-      "Parliament Speaks",
-      tabPanel("4",
-               sidebarLayout(
-                   sidebarPanel(
-                    htmlOutput("about_me"), 
-                    img(src="headshot.jpg",width="100%"), 
-                    width = 3),
-                   mainPanel(
-                       plotOutput("netwPlot")
-                   ))),
-      tabPanel("3"),
-      tabPanel("2"),
-      tabPanel("1")
-  )
+# Adding title and favicon
+
+HTML('<script> document.title = "Parliament Speaks"; </script>'),
+
+tags$head(tags$link(rel="shortcut icon", href="icon.ico")),
+
+# Setting up page layout
+
+navbarPage("Parliament Speaks",
+           tabPanel("3"),
+           tabPanel("2"),
+           tabPanel("1"),
+           tabPanel("About",
+             sidebarLayout(
+               sidebarPanel(
+                 htmlOutput("about_me"), 
+                 img(src="headshot.jpg",width="100%"), 
+                 htmlOutput("bioinfo"),
+                 width = 4),
+               mainPanel(
+                 htmlOutput("proj_info")
+               )
+             )
+          )
+        )
 ))
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  
+    source("static_text.R")
     
     output$netwPlot <- renderPlot({make_plot_master()}, width = 900, height = 900, execOnResize = TRUE)
 
-    output$about_me <- renderUI({HTML("<b> About the Developer </b> <br/><br/>")})
+    # Code for about page
+    
+    output$about_me <- about_me_header
+    output$bioinfo <- bioinfo
+    output$proj_info <- proj_info
 }
 
 # Run the application 

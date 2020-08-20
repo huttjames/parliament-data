@@ -12,6 +12,7 @@ library(forcats)
 library(skimr)
 library(purrr)
 library(gganimate)
+library(plotly)
 library(lubridate)
 library(tidyverse)
 ```
@@ -20,7 +21,7 @@ library(tidyverse)
 
 # The database is stored as an r object, rename it for ease of access
 
-source("cleaning.r")
+# source("cleaning.r")
 
 x <- readRDS("raw-data/cleaned_x.rds")
 ```
@@ -61,24 +62,54 @@ cols <- c("Con" = "#0a3b7d",
 
 # Plot proportion of speeches by party
 
-x_group %>%
+prop_plot <- x_group %>%
   group_by(year, party_simple) %>%
   summarise(n = n()) %>%
-  mutate(prop = n / sum(n)) %>%
+  mutate(prop = n * 100 / sum(n)) %>%
   ggplot(aes(year, prop, fill = party_simple)) + 
-  geom_col() + 
-  scale_fill_manual(values = cols) + 
-  transition_states(year) + 
-  shadow_mark(alpha = 1)
+  geom_col() +
+  scale_fill_manual(values = cols) +
+  labs(title = "Proportion of House of Commons Speeches by Party by Year",
+       subtitle = "Excluding Interventions by the Speaker",
+       x = "Year",
+       y = "Proportion", 
+       fill = "Party") + 
+  theme_classic()
 
 # Plot total number of speeches by party
 
-x_group %>%
+total_plot <- x_group %>%
   group_by(year, party_simple) %>%
   summarise(n = n()) %>%
   ggplot(aes(year, n, fill = party_simple)) + 
   geom_col() + 
-  scale_fill_manual(values = cols)
+  scale_fill_manual(values = cols) +
+  labs(title = "Number of House of Commons Speeches by Party by Year",
+       subtitle = "Excluding Interventions by the Speaker",
+       x = "Year",
+       y = "Total Speeches", 
+       fill = "Party") + 
+  theme_classic()
+
+prop_plot
+total_plot
+
+anim_prop_plot <- prop_plot + 
+  transition_states(year) +
+  shadow_mark(alpha = 1)
+
+anim_total_plot <- total_plot + 
+  transition_states(year) +
+  shadow_mark(alpha = 1)
+
+anim_prop_plot
+anim_total_plot
+
+ggsave("plots/prop_plot.png", prop_plot)
+ggsave("plots/total_plot.png", total_plot)
+anim_save("plots/anim_prop_plot.gif", anim_prop_plot)
+anim_save("plots/anim_total_plot.gif", anim_total_plot)
+
 
 ```
 
