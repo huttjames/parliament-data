@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(forcats)
 library(skimr)
 library(purrr)
+library(gganimate)
 library(lubridate)
 library(tidyverse)
 ```
@@ -21,7 +22,7 @@ library(tidyverse)
 
 source("cleaning.r")
 
-x <- load_data()
+x <- readRDS("raw-data/cleaned_x.rds")
 ```
 
 ```{r x_mod, echo=FALSE}
@@ -36,23 +37,23 @@ x_group <- x %>%
 # Reorder the parties into order of interest
 
 x_group$party_simple <- x_group$party_simple %>%
-  fct_relevel(c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Independent", "Change UK", "UKIP", "GPEW", "Other"))
+  fct_relevel(c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Change UK", "UKIP", "GPEW", "Independent", "Other"))
 
 # Assign each party a colour 
 
-cols <- c("Con" = "blue",
-          "Lab" = "red",
-          "LibDem" = "orange",
-          "SNP" = "yellow",
-          "DUP" = "blue",
-          "PlaidCymru" = "yellow",
-          "UUP" = "orange",
-          "SDLP" = "green",
+cols <- c("Con" = "#0a3b7d",
+          "Lab" = "#e4003b",
+          "LibDem" = "#fbb347",
+          "SNP" = "#fcf38e",
+          "DUP" = "#24303c",
+          "PlaidCymru" = "#006a56",
+          "UUP" = "#a0cef2",
+          "SDLP" = "#00704f",
+          "Change UK" = "black",
+          "UKIP" = "#702d85",
+          "GPEW" = "#6bb13c",
           "Independent" = "black",
-          "Change UK" = "grey",
-          "UKIP" = "purple",
-          "GPEW" = "green",
-          "Other" = "black")
+          "Other" = "grey")
 
 
 ```
@@ -66,7 +67,9 @@ x_group %>%
   mutate(prop = n / sum(n)) %>%
   ggplot(aes(year, prop, fill = party_simple)) + 
   geom_col() + 
-  scale_fill_manual(values = cols)
+  scale_fill_manual(values = cols) + 
+  transition_states(year) + 
+  shadow_mark(alpha = 1)
 
 # Plot total number of speeches by party
 
