@@ -30,22 +30,22 @@ x <- x %>%
 
 # save the summaries to be easily accessed later
 
-x_sum <- summary(x)
-x_skim <- skim(x)
+    # x_sum <- summary(x)
+    # x_skim <- skim(x)
 
 # produce a subset of the data for testing changes on 
 
-x_5000 <- sample_n(x, 5000)
+  # x_5000 <- sample_n(x, 5000)
 
-# x_mod is the cleaned version of the data sometimes the chair was given their
-# actual name, manually checked that the speaker had held a chairperson post and
-# then recoded as chair Recoded chair parties as CHAIR to separate from other.
-# Relevant as in the HoC Speakers relinquish party affiliation. Removed the
-# cases where speaker was not recorded. This was only 1053 entries, a small
-# fraction of the total. Similarly removed entries where party was NA,
-# representing 2816 entries or 0.1% of the total.
+# Sometimes the chair was given their actual name, manually checked that the
+# speaker had held a chairperson post and then recoded as chair Recoded chair
+# parties as CHAIR to separate from other. Relevant as in the HoC Speakers
+# relinquish party affiliation. Removed the cases where speaker was not
+# recorded. This was only 1053 entries, a small fraction of the total. Similarly
+# removed entries where party was NA, representing 2816 entries or 0.1% of the
+# total.
 
-x_mod <- x %>%
+x <- x %>%
   mutate(speaker = ifelse(chair == TRUE,
                           "CHAIR",
                           speaker)) %>%
@@ -55,11 +55,23 @@ x_mod <- x %>%
   filter(is.na(speaker) == FALSE) %>%
   filter(is.na(party) == FALSE)
 
+# Modify x such that we keep only the main parties of interest separate and
+# remove the partial year 1988
+
+x <- x %>%
+  filter(party != "CHAIR") %>%
+  filter(year > 1988) %>%
+  mutate(party_simple = as_factor(if_else(party %in% c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Independent", "Change UK", "UKIP", "GPEW"), party, "Other"))) 
+
+# Reorder the parties into order of interest
+
+x$party_simple <- x$party_simple %>%
+  fct_relevel(c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Change UK", "UKIP", "GPEW", "Independent", "Other"))
 
 
 # Save the cleaned data to a new rds 
 
-saveRDS(x_mod, "raw-data/cleaned_x.rds")
+saveRDS(x, "raw-data/cleaned_x.rds")
 
 
 

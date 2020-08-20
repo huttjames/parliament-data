@@ -21,54 +21,22 @@ library(tidyverse)
 
 # The database is stored as an r object, rename it for ease of access
 
-# source("cleaning.r")
+source("defaults.R")
 
 x <- readRDS("raw-data/cleaned_x.rds")
 ```
 
-```{r x_mod, echo=FALSE}
-
-# Modify x such that we keep only the main parties of interest separate
-
-x_group <- x %>%
-  filter(party != "CHAIR") %>%
-  filter(year > 1988) %>%
-  mutate(party_simple = as_factor(if_else(party %in% c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Independent", "Change UK", "UKIP", "GPEW"), party, "Other"))) 
-
-# Reorder the parties into order of interest
-
-x_group$party_simple <- x_group$party_simple %>%
-  fct_relevel(c("Con", "Lab", "LibDem", "SNP", "DUP", "PlaidCymru", "UUP", "SDLP", "Change UK", "UKIP", "GPEW", "Independent", "Other"))
-
-# Assign each party a colour 
-
-cols <- c("Con" = "#0a3b7d",
-          "Lab" = "#e4003b",
-          "LibDem" = "#fbb347",
-          "SNP" = "#fcf38e",
-          "DUP" = "#24303c",
-          "PlaidCymru" = "#006a56",
-          "UUP" = "#a0cef2",
-          "SDLP" = "#00704f",
-          "Change UK" = "black",
-          "UKIP" = "#702d85",
-          "GPEW" = "#6bb13c",
-          "Independent" = "black",
-          "Other" = "grey")
-
-
-```
 ```{r charts1, echo=FALSE}
 
 # Plot proportion of speeches by party
 
-prop_plot <- x_group %>%
+prop_plot <- x %>%
   group_by(year, party_simple) %>%
   summarise(n = n()) %>%
   mutate(prop = n * 100 / sum(n)) %>%
   ggplot(aes(year, prop, fill = party_simple)) + 
   geom_col() +
-  scale_fill_manual(values = cols) +
+  scale_fill_manual(values = party_colours) +
   labs(title = "Proportion of House of Commons Speeches by Party by Year",
        subtitle = "Excluding Interventions by the Speaker",
        x = "Year",
@@ -78,18 +46,19 @@ prop_plot <- x_group %>%
 
 # Plot total number of speeches by party
 
-total_plot <- x_group %>%
+total_plot <- x %>%
   group_by(year, party_simple) %>%
   summarise(n = n()) %>%
   ggplot(aes(year, n, fill = party_simple)) + 
   geom_col() + 
-  scale_fill_manual(values = cols) +
+  scale_fill_manual(values = party_colours) +
   labs(title = "Number of House of Commons Speeches by Party by Year",
        subtitle = "Excluding Interventions by the Speaker",
        x = "Year",
        y = "Total Speeches", 
        fill = "Party") + 
   theme_classic()
+
 
 ```
 
