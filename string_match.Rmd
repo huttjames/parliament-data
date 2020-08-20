@@ -1,0 +1,55 @@
+---
+title: "string_match"
+author: "James Hutt"
+date: "20/08/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(forcats)
+library(skimr)
+library(purrr)
+library(gganimate)
+library(plotly)
+library(skimr)
+library(lubridate)
+library(tidyverse)
+```
+```{r}
+
+x <- readRDS("raw-data/cleaned_x.rds") 
+
+x <- x %>%
+  mutate(text_digital = grepl("digital", text, ignore.case = TRUE),
+         text_data = grepl("data", text, ignore.case = TRUE),
+         text_internet = grepl("internet", text, ignore.case = TRUE),
+         text_gds = grepl("gds", text, ignore.case = TRUE),
+         text_govdigser = grepl("Government Digital Service", text, ignore.case = TRUE),
+         text_govtech = grepl("govtech", text, ignore.case = TRUE),
+         text_website = grepl("website", text, ignore.case = TRUE),
+         text_platform = grepl("platform", text, ignore.case = TRUE),
+         text_open_data = grepl("open data", text, ignore.case = TRUE),
+         text_blog = grepl("blog", text, ignore.case = TRUE),
+         text_social_media = grepl("social media", text, ignore.case = TRUE),
+         text_api = grepl("API", text, ignore.case = FALSE),
+         text_agile = grepl("agile", text, ignore.case = TRUE),
+         text_crypto = grepl("crypto", text, ignore.case = TRUE),
+         text_user_centred = grepl("user centred", text, ignore.case = TRUE),
+         text_govuk = grepl("gov.uk", text, ignore.case = TRUE),
+         text_digital_by_default = grepl("digital by default", text, ignore.case = TRUE),
+         text_database = grepl("database", text, ignore.case = TRUE),              text_google = grepl("google", text, ignore.case = TRUE),
+         text_education = grepl("education", text, ignore.case = TRUE),
+         text_brexit = grepl("brexit", text, ignore.case = TRUE))
+
+x_a <- x %>%
+  select(-date, -agenda, -party.facts.id, -terms, -parliament, -iso3country)
+
+skim(x_a)
+
+
+saveRDS(x_a, "raw-data/string_match_1")
+
+```
+

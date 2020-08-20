@@ -91,25 +91,5 @@ total_plot <- x_group %>%
        fill = "Party") + 
   theme_classic()
 
-prop_plot
-total_plot
-
-anim_prop_plot <- prop_plot + 
-  transition_states(year) +
-  shadow_mark(alpha = 1)
-
-anim_total_plot <- total_plot + 
-  transition_states(year) +
-  shadow_mark(alpha = 1)
-
-anim_prop_plot
-anim_total_plot
-
-ggsave("plots/prop_plot.png", prop_plot)
-ggsave("plots/total_plot.png", total_plot)
-anim_save("plots/anim_prop_plot.gif", anim_prop_plot)
-anim_save("plots/anim_total_plot.gif", anim_total_plot)
-
-
 ```
 
