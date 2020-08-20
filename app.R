@@ -5,8 +5,6 @@ library(shinythemes)
 library(vembedr)
 library(tidyverse)
 
-make_plot_master <- function(){ggplot(iris, aes(Sepal.Length, Sepal.Width)) + geom_point()}
-
 # Define UI for application that draws a histogram
 ui <- fluidPage(fluidPage(theme = shinytheme("flatly"),
                           
@@ -41,9 +39,8 @@ navbarPage("Parliament Speaks",
 server <- function(input, output) {
   
     source("static_text.R")
+    source("defaults.R")
     
-    output$netwPlot <- renderPlot({make_plot_master()}, width = 900, height = 900, execOnResize = TRUE)
-
     # Code for about page
     
     output$about_me <- about_me_header
